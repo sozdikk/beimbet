@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+        }
+        #inputContainer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #inputWord {
+            width: 90%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #translateButton {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #result {
+            color: #6f42c1;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Бейімдеу сөздік</h1>
+        <div id="inputContainer">
+            <input type="text" id="inputWord" placeholder="Орысша сөз енгіз"><br>
+        </div>
+        <button id="translateButton">Бейімде</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const wordDictionary = {};
+
+        // Функция для загрузки текстового файла
+        function loadDictionary() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "dictionary.txt", true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const lines = xhr.responseText.split('\n');
+                    for (const line of lines) {
+                        const [rusWord, kazWord] = line.split(':');
+                        wordDictionary[rusWord.trim()] = kazWord.trim();
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        // Вызываем функцию загрузки при загрузке страницы
+        window.onload = function () {
+            loadDictionary();
+        };
+
+        // Получаем ссылки на элементы HTML
+        const inputWord = document.getElementById("inputWord");
+        const translateButton = document.getElementById("translateButton");
+        const resultDiv = document.getElementById("result");
+
+        // Добавляем обработчик события для кнопки "Перевести"
+        translateButton.addEventListener("click", function () {
+            const введенноеСлово = inputWord.value.trim().toLowerCase();
+            if (введенноеСлово in wordDictionary) {
+                const адаптированноеСлово = wordDictionary[введенноеСлово];
+                resultDiv.textContent = `<Бейімделген сөз>: ${адаптированноеСлово}`;
+            } else {
+                resultDiv.textContent = "Сөз табылмады.";
+            }
+        });
+    </script>
+</body>
+</html>
+
